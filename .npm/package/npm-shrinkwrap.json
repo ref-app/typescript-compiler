@@ -77,7 +77,7 @@
       "integrity": "sha512-oRSIpR8pxT1Wr2FquTNnGet79b3BWljqOuoW/h4oBhxJ/HUbX5nX6JSruTkvXDCFMwDPvsaTTbvMLKZWSy0R5g=="
     },
     "typescript": {
-      "version": "3.8.2",
+      "version": "3.7.2",
       "resolved": "https://registry.npmjs.org/typescript/-/typescript-3.8.2.tgz",
       "integrity": "sha512-ml7V7JfiN2Xwvcer+XAf2csGO1bPBdRbFCkYBczNZggrBZ9c7G3riSUeJmqEU5uOtXNPMhE3n+R4FA/3YOAWOQ=="
     },
