@@ -14,7 +14,7 @@ Npm.depends({
   underscore: '1.9.1',
   diff: '4.0.1',
   'lru-cache': '5.1.1',
-  typescript: process.env.TYPESCRIPT_EXTERNAL_PATH ? 'file://' + process.env.TYPESCRIPT_EXTERNAL_PATH : '3.8.2',
+  typescript: process.env.TYPESCRIPT_EXTERNAL_PATH ? 'file://' + process.env.TYPESCRIPT_EXTERNAL_PATH : '3.8.3',
 });
 
 Package.onUse(function(api) {
