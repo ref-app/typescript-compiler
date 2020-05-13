@@ -1,6 +1,6 @@
 Package.describe({
   name: 'refapp:typescript-compiler',
-  version: '0.12.16',
+  version: '0.12.17',
   summary: 'TypeScript Compiler for Meteor, based on barbatus:typescript-compiler',
   git: 'https://github.com/ref-app/typescript-compiler',
   documentation: 'README.md',
@@ -14,7 +14,7 @@ Npm.depends({
   underscore: '1.9.1',
   diff: '4.0.1',
   'lru-cache': '5.1.1',
-  typescript: process.env.TYPESCRIPT_EXTERNAL_PATH ? 'file://' + process.env.TYPESCRIPT_EXTERNAL_PATH : '3.8.3',
+  typescript: process.env.TYPESCRIPT_EXTERNAL_PATH ? 'file://' + process.env.TYPESCRIPT_EXTERNAL_PATH : '3.9.2',
 });
 
 Package.onUse(function(api) {
