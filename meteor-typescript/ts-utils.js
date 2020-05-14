@@ -185,8 +185,11 @@ export class TsDiagnostics {
     const cannotFindModuleCode = (
       ts.Diagnostics[
         "Cannot_find_module_0_or_its_corresponding_type_declarations" // Typescript 3.9, see tsc.js
-      ] || ts.Diagnostics["Cannot_find_module_0"]
-    ).code; // Earlier
+      ] ||
+      ts.Diagnostics[
+        "Cannot_find_module_0" // before 3.9
+      ]
+    ).code;
     const index = _.findIndex(
       this.semanticErrors,
       (msg) => msg.code === cannotFindModuleCode
