@@ -1,24 +1,24 @@
-import assert from 'assert';
+import assert from "assert";
 // import ts from 'typescript';
-const ts = Npm.require('typescript');
+const ts = Npm.require("typescript");
 // import _ from 'underscore';
-const _ = Npm.require('underscore');
+const _ = Npm.require("underscore");
 
-import { assertProps } from './utils';
+import { assertProps } from "./utils";
 
 // 1) Normalizes slashes in the file path
 // 2) Removes file extension
 export function normalizePath(filePath) {
   let resultName = filePath;
-  if (ts.fileExtensionIs(filePath, '.map')) {
-    resultName = filePath.replace(/\.map$/, '');
+  if (ts.fileExtensionIs(filePath, ".map")) {
+    resultName = filePath.replace(/\.map$/, "");
   }
   return ts.removeFileExtension(ts.normalizeSlashes(resultName));
 }
 
 export function getRootedPath(filePath) {
   if (ts.getRootLength(filePath) === 0) {
-    return '/' + filePath;
+    return "/" + filePath;
   }
   return filePath;
 }
@@ -58,7 +58,7 @@ function getDeps(sourceFile, checker) {
 
   if (sourceFile.imports) {
     const paths = new Set();
-    _.each(sourceFile.imports, function(importName) {
+    _.each(sourceFile.imports, function (importName) {
       const module = checker.getSymbolAtLocation(importName);
       if (module && !isExternal(module)) {
         const path = getModulePath(module);
@@ -66,7 +66,7 @@ function getDeps(sourceFile, checker) {
           paths.add(path);
         }
         const nodes = checker.getExportsOfModule(module);
-        _.each(nodes, function(node) {
+        _.each(nodes, function (node) {
           if (node.parent && node.parent !== module) {
             const path = getModulePath(node.parent);
             if (path) {
@@ -90,7 +90,7 @@ function getDeps(sourceFile, checker) {
         });
       }
     });
-    paths.forEach(function(path) {
+    paths.forEach(function (path) {
       modules.push(path);
     });
   }
@@ -120,7 +120,9 @@ function getMappings(sourceFile) {
     modules.forEach((module, modulePath) => {
       mappings.push({
         modulePath,
-        resolvedPath: module ? ts.removeFileExtension(module.resolvedFileName) : null,
+        resolvedPath: module
+          ? ts.removeFileExtension(module.resolvedFileName)
+          : null,
         external: module ? module.isExternalLibraryImport : false,
         resolved: !!module,
       });
@@ -135,9 +137,9 @@ function getRefs(sourceFile) {
   let refTypings = [],
     refFiles = [];
   if (sourceFile.referencedFiles) {
-    const refPaths = sourceFile.referencedFiles.map(ref => ref.fileName);
-    refTypings = _.filter(refPaths, ref => isTypings(ref));
-    refFiles = _.filter(refPaths, ref => !isTypings(ref));
+    const refPaths = sourceFile.referencedFiles.map((ref) => ref.fileName);
+    refTypings = _.filter(refPaths, (ref) => isTypings(ref));
+    refFiles = _.filter(refPaths, (ref) => !isTypings(ref));
   }
 
   // Collect resolved paths to referenced declaration types, e.g.:
@@ -170,7 +172,7 @@ export class TsDiagnostics {
   constructor(diagnostics) {
     assert.ok(this instanceof TsDiagnostics);
     assert.ok(diagnostics);
-    assertProps(diagnostics, ['syntacticErrors', 'semanticErrors']);
+    assertProps(diagnostics, ["syntacticErrors", "semanticErrors"]);
 
     _.extend(this, diagnostics);
   }
@@ -180,7 +182,15 @@ export class TsDiagnostics {
   }
 
   hasUnresolvedModules() {
-    const index = _.findIndex(this.semanticErrors, msg => msg.code === ts.Diagnostics.Cannot_find_module_0.code);
+    const cannotFindModuleCode = (
+      ts.Diagnostics[
+        "Cannot_find_module_0_or_its_corresponding_type_declarations" // Typescript 3.9, see tsc.js
+      ] || ts.Diagnostics["Cannot_find_module_0"]
+    ).code; // Earlier
+    const index = _.findIndex(
+      this.semanticErrors,
+      (msg) => msg.code === cannotFindModuleCode
+    );
     return index !== -1;
   }
 }
@@ -194,7 +204,10 @@ function flattenDiagnostics(tsDiagnostics) {
     if (!diagnostic.file) continue;
 
     const pos = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start);
-    const message = ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n');
+    const message = ts.flattenDiagnosticMessageText(
+      diagnostic.messageText,
+      "\n"
+    );
     const line = pos.line + 1;
     const column = pos.character + 1;
 
@@ -213,20 +226,22 @@ function flattenDiagnostics(tsDiagnostics) {
 export function hasErrors(diagnostics) {
   if (!diagnostics) return true;
 
-  return diagnostics.semanticErrors.length || diagnostics.syntacticErrors.length;
+  return (
+    diagnostics.semanticErrors.length || diagnostics.syntacticErrors.length
+  );
 }
 
 export function isSourceMap(fileName) {
-  return ts.fileExtensionIs(fileName, '.map');
+  return ts.fileExtensionIs(fileName, ".map");
 }
 
 export function isTypings(fileName) {
-  return ts.fileExtensionIs(fileName, '.d.ts');
+  return ts.fileExtensionIs(fileName, ".d.ts");
 }
 
 export function getExcludeRegExp(exclude) {
   if (!exclude) return exclude;
 
   if (!ts.version) console.trace();
-  return ts.getRegularExpressionForWildcard(exclude, '', 'exclude');
+  return ts.getRegularExpressionForWildcard(exclude, "", "exclude");
 }
